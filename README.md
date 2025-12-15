@@ -1,6 +1,8 @@
 # MuseAI: Visual Poetry & Analysis Suite
 
-![MuseAI Banner](https://images.unsplash.com/photo-1519681393798-3828fb4090bb?q=80&w=1200&auto=format&fit=crop)
+<img width="400" height="300" alt="Screenshot 2025-12-15 070743" src="https://github.com/user-attachments/assets/0c35e99c-9738-4e88-a6c3-b527e994fe4f" />
+<img width="400" height="300" alt="Screenshot 2025-12-15 070918" src="https://github.com/user-attachments/assets/0e62bba3-0748-449a-816c-4495781734a6" />
+
 
 MuseAI is an intelligent creative suite that transforms visual inspiration into poetic expression. Powered by Google's Gemini 3.0 Pro, it bridges the gap between visual art and literature, offering tools for poetry generation, detailed image analysis, and creative conversational assistance.
 
@@ -9,7 +11,7 @@ MuseAI is an intelligent creative suite that transforms visual inspiration into 
 ### 1. Visual Poetry Generator
 - **Image-to-Text Synthesis**: Upload an image to serve as the visual anchor for your poem.
 - **Customizable Context**: Input your feelings, specific thoughts, or memories associated with the image.
-- **Style Control**: Define the poetic structure (e.g., Haiku, Sonnet, Free Verse).
+- **Style Control**: Define the poetic structure (e.g., Haiku, Sonnet, Free Verse, Poet Style (e.g. Bukowski, Seuss, Neruda)).
 - **Intensity Slider**: Adjust the emotional weight of the poem from subtle to dramatic.
 - **Text-to-Speech (TTS)**: Listen to your generated poem read aloud by a neural voice.
 
