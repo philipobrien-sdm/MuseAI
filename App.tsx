@@ -3,13 +3,15 @@ import { Tab, ImageFile } from './types';
 import PoetryView from './components/PoetryView';
 import AnalyzerView from './components/AnalyzerView';
 import ChatView from './components/ChatView';
+import { processImage } from './utils/imageProcessing';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.POETRY);
   const [image, setImage] = useState<ImageFile | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
@@ -17,18 +19,17 @@ const App: React.FC = () => {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        // Extract base64 part
-        const base64 = result.split(',')[1];
-        setImage({
-          base64,
-          mimeType: file.type,
-          preview: result,
-        });
-      };
-      reader.readAsDataURL(file);
+      setIsProcessing(true);
+      try {
+        // Resize and compress image before setting state
+        const processedImage = await processImage(file);
+        setImage(processedImage);
+      } catch (error) {
+        console.error("Error processing image:", error);
+        alert("Failed to process image. Please try another file.");
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
 
@@ -89,16 +90,26 @@ const App: React.FC = () => {
           <div className="mb-8 animate-fade-in-down">
             {!image ? (
               <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-48 sm:h-64 border-2 border-dashed border-slate-300 rounded-3xl bg-white hover:bg-slate-50 transition-colors cursor-pointer flex flex-col items-center justify-center gap-4 group"
+                onClick={() => !isProcessing && fileInputRef.current?.click()}
+                className={`w-full h-48 sm:h-64 border-2 border-dashed border-slate-300 rounded-3xl bg-white transition-colors flex flex-col items-center justify-center gap-4 group
+                  ${isProcessing ? 'cursor-wait opacity-70' : 'hover:bg-slate-50 cursor-pointer'}`}
               >
-                <div className="p-4 bg-indigo-50 rounded-full group-hover:bg-indigo-100 transition-colors">
-                  <span className="material-symbols-rounded text-indigo-500 text-4xl">add_photo_alternate</span>
-                </div>
-                <div className="text-center">
-                  <p className="text-lg font-medium text-slate-700">Upload an Image</p>
-                  <p className="text-sm text-slate-500 mt-1">Click to browse or drag & drop</p>
-                </div>
+                {isProcessing ? (
+                   <div className="flex flex-col items-center gap-3">
+                     <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                     <p className="text-sm font-medium text-slate-500">Optimizing image...</p>
+                   </div>
+                ) : (
+                  <>
+                    <div className="p-4 bg-indigo-50 rounded-full group-hover:bg-indigo-100 transition-colors">
+                      <span className="material-symbols-rounded text-indigo-500 text-4xl">add_photo_alternate</span>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-medium text-slate-700">Upload an Image</p>
+                      <p className="text-sm text-slate-500 mt-1">Click to browse or drag & drop</p>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <div className="relative group rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
@@ -125,6 +136,7 @@ const App: React.FC = () => {
               onChange={handleFileChange}
               accept="image/*"
               className="hidden"
+              disabled={isProcessing}
             />
           </div>
         )}
